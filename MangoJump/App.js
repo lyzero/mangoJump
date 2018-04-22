@@ -40,6 +40,7 @@ export class Mango extends React.Component {
           style={{
             width: 51,
             height: 51,
+            borderRadius:30,
             resizeMode: Image.resizeMode.contain,
           }}
           source={require('../MangoJump/Assets/MangoLogo.png')} 
@@ -72,6 +73,7 @@ const styles = StyleSheet.create({
   playerMango: {
     marginRight: 20,
     backgroundColor: '#FFC107',
+    borderRadius:30
   },
 
 
