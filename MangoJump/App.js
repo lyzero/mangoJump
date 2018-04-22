@@ -5,18 +5,24 @@ export default class App extends React.Component {
 
 constructor(props) {
     super(props);
-    this.state = {
-      startTime: new Date().getTime(),
-      endTime: new Date().getTime(),
-      diff: 0
-    };
+    this.state = {  startTime:Date.now(), diff: 0}
   }
 
+  onPressIn = () => {
+    this.setState({
+      startTime: Date.now()
+    })
+  }
+  onPressOut = () => {
+    this.setState({
+      diff: Date.now() - this.state.startTime
+    })
+  }
 
   render() {
     return ( 
       <View style={styles.container}>
-        <TouchableOpacity style={styles.container} onPressIn={onTimerStart} onPressOut={onTimerEnd} onPress={()=>{console.log("on press")}}>
+        <TouchableOpacity style={styles.container} onPressIn={this.onPressIn} onPressOut={this.onPressOut}>
           <Text>{this.state.diff}</Text>
           <Mango></Mango>
           <Obstacle></Obstacle>
@@ -40,20 +46,6 @@ export class Mango extends React.Component {
         />
       </View>
     );
-  }
-}
-
-function onTimerStart() {
-  console.log("start");
-  this.setState = {startTime: new Date().getTime()};
-}
-
-function onTimerEnd() {
-  if (this.state) {
-      console.log("end");
-       this.setState = {diff: new Date().getTime() - this.state.startTime};
-  }else {
-     this.setState = {diff: 0};
   }
 }
  
