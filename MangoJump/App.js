@@ -52,12 +52,20 @@ export class Mango extends React.Component {
  
 
 export class Obstacle extends React.Component {
+
+
+  getRandomInt = () => {
+    let height = Math.floor(Math.floor(50) * Math.floor(80));
+    console.log(height)
+    return 120;
+  }
+
   render() {
     return (
       <View style={styles.rectangleShapeView}>
       </View>
     );
-  }
+  }  
 }
 
 
