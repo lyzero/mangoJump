@@ -54,15 +54,20 @@ export class Mango extends React.Component {
 export class Obstacle extends React.Component {
 
 
-  getRandomInt = () => {
-    let height = Math.floor(Math.floor(50) * Math.floor(80));
+  getRandomHeightStyle = function() {
+    let height = Math.floor(Math.random() * 201);
     console.log(height)
-    return 120;
+    return {
+      marginTop: 20,
+      width: 120 * 2,
+      height: height,
+      backgroundColor: '#FFC107'
+    };
   }
 
   render() {
     return (
-      <View style={styles.rectangleShapeView}>
+      <View style={this.getRandomHeightStyle()}>
       </View>
     );
   }  
@@ -73,7 +78,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'center',
     flexDirection: 'row'
   },
@@ -88,7 +93,6 @@ const styles = StyleSheet.create({
   rectangleShapeView: {
     marginTop: 20,
     width: 120 * 2,
-    height: 120,
     backgroundColor: '#FFC107'
   }
 });
