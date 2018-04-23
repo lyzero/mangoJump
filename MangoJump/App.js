@@ -5,7 +5,22 @@ export default class App extends React.Component {
 
 constructor(props) {
     super(props);
-    this.state = {  startTime:Date.now(), diff: 0}
+    this.state = {  
+      startTime:Date.now(),
+      diff: 0, 
+      mangoPosition:{
+        width:51,
+        height: 51,
+        borderRadius: 30,
+        resizeMode: Image.resizeMode.contain
+      },
+      obstacleCenter:{
+        width: 51,
+        height: 51,
+        borderRadius: 30,
+        resizeMode: Image.resizeMode.contain
+      }
+    }
   }
 
   onPressIn = () => {
@@ -13,18 +28,31 @@ constructor(props) {
       startTime: Date.now()
     })
   }
+
   onPressOut = () => {
     this.setState({
       diff: Date.now() - this.state.startTime
     })
   }
 
+  onMangoMove = () => {
+    this.setState({
+      mangoPosition: {
+        width: this.state.diff/8,
+        height:86,
+        borderRadius: 30,
+        resizeMode: Image.resizeMode.contain
+      }
+    })
+  }
+
   render() {
     return ( 
       <View style={styles.container}>
-        <TouchableOpacity style={styles.container} onPressIn={this.onPressIn} onPressOut={this.onPressOut}>
+        <TouchableOpacity style={styles.container} onPressIn={this.onPressIn} onPressOut={this.onPressOut} 
+        onPress={this.onMangoMove}>
           <Text>{this.state.diff}</Text>
-          <Mango></Mango>
+          <Mango moveStyle={this.state.mangoPosition}></Mango>
           <Obstacle></Obstacle>
         </TouchableOpacity>
       </View>
@@ -37,12 +65,7 @@ export class Mango extends React.Component {
     return (
       <View style={styles.playerMango}>
         <Image
-          style={{
-            width: 51,
-            height: 51,
-            borderRadius:30,
-            resizeMode: Image.resizeMode.contain,
-          }}
+          style={this.props.moveStyle ? this.props.moveStyle : styles.playerMango} 
           source={require('../MangoJump/Assets/MangoLogo.png')} 
         />
       </View>
@@ -86,9 +109,10 @@ const styles = StyleSheet.create({
   playerMango: {
     marginRight: 20,
     backgroundColor: '#FFC107',
-    borderRadius:30
+    borderRadius:30,
+    left: 0,
+    bottom: 0
   },
-
 
   rectangleShapeView: {
     marginTop: 20,
