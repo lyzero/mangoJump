@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity,StyleSheet, Text, View, Image } from 'react-native';
+import { TouchableOpacity,StyleSheet, Text, View, Image, Dimensions } from 'react-native';
 
 export default class App extends React.Component {
 
@@ -8,12 +8,8 @@ constructor(props) {
     this.state = {  
       startTime:Date.now(),
       diff: 0, 
-      mangoPosition:{
-        width:51,
-        height: 51,
-        borderRadius: 30,
-        resizeMode: Image.resizeMode.contain
-      },
+      targetY: 5,
+      mangoPosition:0,
       obstacleCenter:{
         width: 51,
         height: 51,
@@ -31,55 +27,18 @@ constructor(props) {
 
   onPressOut = () => {
     this.setState({
-      diff: Date.now() - this.state.startTime
+      diff: Date.now() - this.state.startTime,
+      nextTargetY: Math.floor(Math.random() * 201)
     })
   }
 
   onMangoMove = () => {
     this.setState({
-      mangoPosition: {
-        width: this.state.diff/8,
-        height:86,
-        borderRadius: 30,
-        resizeMode: Image.resizeMode.contain
-      }
+      mangoPosition: this.state.targetY
     })
   }
 
-  render() {
-    return ( 
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.container} onPressIn={this.onPressIn} onPressOut={this.onPressOut} 
-        onPress={this.onMangoMove}>
-          <Text>{this.state.diff}</Text>
-          <Mango moveStyle={this.state.mangoPosition}></Mango>
-          <Obstacle></Obstacle>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-}
-
-export class Mango extends React.Component {
-  render() {
-    return (
-      <View style={styles.playerMango}>
-        <Image
-          style={this.props.moveStyle ? this.props.moveStyle : styles.playerMango} 
-          source={require('../MangoJump/Assets/MangoLogo.png')} 
-        />
-      </View>
-    );
-  }
-}
- 
-
-export class Obstacle extends React.Component {
-
-
-  getRandomHeightStyle = function() {
-    let height = Math.floor(Math.random() * 201);
-    console.log(height)
+  getRandomHeightStyle = function(height) {
     return {
       marginTop: 20,
       width: 120 * 2,
@@ -90,7 +49,39 @@ export class Obstacle extends React.Component {
 
   render() {
     return (
-      <View style={this.getRandomHeightStyle()}>
+      <View style={styles.container}>
+        <Mango mangoPosition={this.state.nextTargetY}></Mango>
+        <View >
+          <TouchableOpacity style={styles.obstacleWrapperStyle} onPressIn={this.onPressIn} onPressOut={this.onPressOut} 
+          onPress={this.onMangoMove}>
+            <Obstacle obstacleStyle={this.getRandomHeightStyle(this.state.nextTargetY)}></Obstacle>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+}
+
+export class Mango extends React.Component {
+  render() {
+    console.log(this.props.mangoPosition)
+    return (
+      <View style={style={top:Dimensions.get("window").height - this.props.mangoPosition, alignItems: "flex-end"}}>
+        <Image
+          style={styles.playerMango} 
+          source={require('../MangoJump/Assets/MangoLogo.png')} 
+        />
+      </View>
+    );
+  }
+}
+ 
+
+export class Obstacle extends React.Component {
+
+  render() {
+    return (
+      <View style={this.props.obstacleStyle ? this.props.obstacleStyle : styles.obstacleStyle}>
       </View>
     );
   }  
@@ -101,22 +92,35 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'flex-end',
     justifyContent: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
 
   playerMango: {
-    marginRight: 20,
-    backgroundColor: '#FFC107',
-    borderRadius:30,
-    left: 0,
-    bottom: 0
+    width: 51,
+    height: 51,
+    borderRadius: 30,
+    resizeMode: Image.resizeMode.contain,
   },
 
   rectangleShapeView: {
     marginTop: 20,
     width: 120 * 2,
     backgroundColor: '#FFC107'
+  },
+  obstacleWrapperStyle: {
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: "flex-end"
+  },
+
+  obstacleStyle: {
+      marginTop: 20,
+      width: 120 * 2,
+      height: 120,
+      backgroundColor: '#FFC107',
+      alignItems: "flex-end"
   }
 });
