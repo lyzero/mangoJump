@@ -1,126 +1,101 @@
 import React from 'react';
-import { TouchableOpacity,StyleSheet, Text, View, Image, Dimensions } from 'react-native';
+import { Button, View, Text, Alert } from 'react-native';
+import { StackNavigator } from 'react-navigation'; // Version can be specified in package.json
+import { GameView } from './screens/GameView'
 
-export default class App extends React.Component {
 
-constructor(props) {
-    super(props);
-    this.state = {  
-      startTime:Date.now(),
-      diff: 0, 
-      targetY: 5,
-      mangoPosition:0,
-      obstacleCenter:{
-        width: 51,
-        height: 51,
-        borderRadius: 30,
-        resizeMode: Image.resizeMode.contain
-      }
-    }
-  }
-
-  onPressIn = () => {
-    this.setState({
-      startTime: Date.now()
-    })
-  }
-
-  onPressOut = () => {
-    this.setState({
-      diff: Date.now() - this.state.startTime,
-      nextTargetY: Math.floor(Math.random() * 201)
-    })
-  }
-
-  onMangoMove = () => {
-    this.setState({
-      mangoPosition: this.state.targetY
-    })
-  }
-
-  getRandomHeightStyle = function(height) {
-    return {
-      marginTop: 20,
-      width: 120 * 2,
-      height: height,
-      backgroundColor: '#FFC107'
-    };
-  }
-
+class HomeScreen extends React.Component {
   render() {
     return (
-      <View style={styles.container}>
-        <Mango mangoPosition={this.state.nextTargetY}></Mango>
-        <View >
-          <TouchableOpacity style={styles.obstacleWrapperStyle} onPressIn={this.onPressIn} onPressOut={this.onPressOut} 
-          onPress={this.onMangoMove}>
-            <Obstacle obstacleStyle={this.getRandomHeightStyle(this.state.nextTargetY)}></Obstacle>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
-}
-
-export class Mango extends React.Component {
-  render() {
-    console.log(this.props.mangoPosition)
-    return (
-      <View style={style={top:Dimensions.get("window").height - this.props.mangoPosition, alignItems: "flex-end"}}>
-        <Image
-          style={styles.playerMango} 
-          source={require('../MangoJump/Assets/MangoLogo.png')} 
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Home Screen</Text>
+        <Button
+          title="Facebook Login"
+          onPress={() => this.props.navigation.navigate('LoginScreen')}
+        />
+        <Button
+          title="Go to Game"
+          onPress={() => this.props.navigation.navigate('GameView')}
         />
       </View>
     );
   }
 }
- 
 
-export class Obstacle extends React.Component {
+class LoginScreen extends React.Component {
+  _handleFacebookLogin = async () => {
+    try {
+      const { type, token } = await Facebook.logInWithReadPermissionsAsync(
+        '1201211719949057', // Replace with your own app id in standalone app
+        { permissions: ['public_profile'] }
+      );
+
+      switch (type) {
+        case 'success': {
+          // Get the user's name using Facebook's Graph API
+          const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
+          const profile = await response.json();
+          Alert.alert(
+            'Logged in!',
+            `Hi ${profile.name}!`,
+          );
+          break;
+        }
+        case 'cancel': {
+          Alert.alert(
+            'Cancelled!',
+            'Login was cancelled!',
+          );
+          break;
+        }
+        default: {
+          Alert.alert(
+            'Oops!',
+            'Login failed!',
+          );
+        }
+      }
+    } catch (e) {
+      Alert.alert(
+        'Oops!',
+        'Login failed!',
+      );
+    }
+  };
 
   render() {
     return (
-      <View style={this.props.obstacleStyle ? this.props.obstacleStyle : styles.obstacleStyle}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+       
+        <Button
+          title="Login with Facebook"
+          onPress={this._handleFacebookLogin}
+        />
+      
       </View>
     );
-  }  
+  }
 }
 
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    flexDirection: 'row',
+const RootStack = StackNavigator(
+  {
+    Home: {
+      screen: HomeScreen,
+    },
+    LoginScreen: {
+      screen: LoginScreen,
+    },
+    GameView: {
+      screen: GameView,
+    }
   },
-
-  playerMango: {
-    width: 51,
-    height: 51,
-    borderRadius: 30,
-    resizeMode: Image.resizeMode.contain,
-  },
-
-  rectangleShapeView: {
-    marginTop: 20,
-    width: 120 * 2,
-    backgroundColor: '#FFC107'
-  },
-  obstacleWrapperStyle: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    alignItems: "flex-end"
-  },
-
-  obstacleStyle: {
-      marginTop: 20,
-      width: 120 * 2,
-      height: 120,
-      backgroundColor: '#FFC107',
-      alignItems: "flex-end"
+  {
+    initialRouteName: 'Home',
   }
-});
+);
+
+export default class App extends React.Component {
+  render() {
+    return <RootStack />;
+  }
+}
